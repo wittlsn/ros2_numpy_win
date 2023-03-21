@@ -1,4 +1,3 @@
-import functools
 from collections.abc import Sequence
 
 _to_numpy = {}

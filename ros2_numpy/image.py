@@ -1,10 +1,7 @@
 import sys
-
 from .registry import converts_from_numpy, converts_to_numpy
 from sensor_msgs.msg import Image
-
 import numpy as np
-from numpy.lib.stride_tricks import as_strided
 
 name_to_dtypes = {
     "rgb8":    (np.uint8,  3),

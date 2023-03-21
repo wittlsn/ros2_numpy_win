@@ -8,12 +8,14 @@ the module as shown below.
 ROS 2:
 
 ```
+pip install transformations
 import ros2_numpy as rnp
 ```
 
 ROS 1:
 
 ```
+pip install transformations
 import ros_numpy as rnp
 ```
 

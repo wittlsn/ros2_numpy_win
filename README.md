@@ -1,34 +1,18 @@
 # ros2_numpy
-This project is a fork of [ros_numpy](https://github.com/eric-wieser/ros_numpy)
-to work with ROS 2. It provides tools for converting ROS messages to and from
-numpy arrays. In the ROS 2 port, the module has been renamed to
+
+Note: This is the same as the original ros_numpy package by eric-wieser and ros2_numpy package by box-robotics just edited to be OS independent and installable using pip.
+
+This project is a fork of [ros2_numpy](https://github.com/Box-Robotics/ros2_numpy) to work with ROS 2. It provides tools for converting ROS messages to and from numpy arrays. In the ROS 2 port, the module has been renamed to
 `ros2_numpy`. Users are encouraged to update their application code to import
 the module as shown below.
-
-ROS 2:
 
 ```
 pip install transformations
 import ros2_numpy as rnp
 ```
 
-ROS 1:
-
-```
-pip install transformations
-import ros_numpy as rnp
-```
-
 Prefacing your calls like `rnp.numpify(...)` or `rnp.msgify(...)` should help
-future proof your codebase while the ROS 1 and ROS 2 ports are API compatible.
-
-The ROS 2 port has been bootstrapped as version `2.0.3`. The `MAJOR`
-version has been set to `2` to indicate ROS 2 and the `MINOR` and `PATCH`
-versions match the ROS 1 version from which the ROS 2 port was
-bootstrapped. The reasoning behind this is to allow for creating tags in this
-fork that can be released into the ROS 2 distribution while not conflicting
-with existing tags on the upstream repository. A release into Foxy is still
-pending.
+future proof your codebase while the ROS 2 ports are API compatible.
 
 This module contains two core functions:
 

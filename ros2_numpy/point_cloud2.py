@@ -3,9 +3,19 @@ from sensor_msgs.msg import PointCloud2, PointField
 import array
 import sys
 import time
+from .registry import converts_from_numpy, converts_to_numpy
 
-
+@converts_to_numpy(PointCloud2)
 def point_cloud2_to_array(msg):
+    """
+    Convert a sensor_msgs/PointCloud2 message to a NumPy array. The fields
+    in the PointCloud2 message are mapped to the fields in the NumPy array
+    as follows:
+    * x, y, z -> X, Y, Z
+    * rgb -> RGB
+    * intensity -> I
+    * other fields are ignored
+    """
     # Get the index of the "rgb" and "intensity" fields in the PointCloud2 message
     field_names = [field.name for field in msg.fields]
     # Check if the "rgb" field is present
@@ -45,7 +55,12 @@ def point_cloud2_to_array(msg):
         return {"xyz": xyz}
 
 
+@converts_from_numpy(PointCloud2)
 def array_to_point_cloud2(np_array, frame_id='base_link'):
+    """
+    Convert a numpy array to a PointCloud2 message. The numpy array must have a "xyz" field
+    and can optionally have a "rgb" field and a "intensity" field.
+    """
     # Check if the "rgb" field is present
     rgb_flag = "rgb" in np_array.keys()
     intensity_flag = "intensity" in np_array.keys()
@@ -53,7 +68,9 @@ def array_to_point_cloud2(np_array, frame_id='base_link'):
     # Create the PointCloud2 message
     msg = PointCloud2()
     msg.header.frame_id = frame_id
-    msg.header.stamp = time.time()
+    current_time = time.time()
+    msg.header.stamp.sec = int(current_time)
+    msg.header.stamp.nanosec = int((current_time - msg.header.stamp.sec) * 1e9)
     msg.height = 1
     msg.width = np_array["xyz"].shape[0]
     msg.fields = [

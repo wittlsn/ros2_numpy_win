@@ -3,4 +3,6 @@ __pycache__
 check.py
 check_2.py
 .idea
+depreciated
+ros2_numpy/point_cloud_test.py
 *~

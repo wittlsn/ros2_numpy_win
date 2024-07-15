@@ -29,5 +29,5 @@ setup(
         exclude=["*.tests", "*.tests.*", "tests.*", "tests"],
     ),
     install_requires=read_requirements("requirements.txt"),
-    python_requires=">=3.10",
+    python_requires=">=3.8",
 )

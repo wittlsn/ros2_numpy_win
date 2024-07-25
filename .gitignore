@@ -6,3 +6,5 @@ check_2.py
 depreciated
 ros2_numpy/point_cloud_test.py
 *~
+*build
+*.egg-info

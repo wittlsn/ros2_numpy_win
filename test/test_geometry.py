@@ -8,7 +8,7 @@ from geometry_msgs.msg import Vector3, Quaternion, Transform, Point, Pose
 
 class TestGeometry(unittest.TestCase):
     def test_point(self):
-        p = Point(x=1., y=2., z=3.)
+        p = Point(x=1.0, y=2.0, z=3.0)
 
         p_arr = rnp.numpify(p)
         np.testing.assert_array_equal(p_arr, [1, 2, 3])
@@ -21,7 +21,7 @@ class TestGeometry(unittest.TestCase):
         self.assertEqual(p, rnp.msgify(Point, p_arrh * 2))
 
     def test_vector3(self):
-        v = Vector3(x=1., y=2., z=3.)
+        v = Vector3(x=1.0, y=2.0, z=3.0)
 
         v_arr = rnp.numpify(v)
         np.testing.assert_array_equal(v_arr, [1, 2, 3])
@@ -37,17 +37,20 @@ class TestGeometry(unittest.TestCase):
 
     def test_transform(self):
         t = Transform(
-            translation=Vector3(x=1., y=2., z=3.),
+            translation=Vector3(x=1.0, y=2.0, z=3.0),
             rotation=Quaternion(
                 **dict(
-                    zip(['x', 'y', 'z', 'w'],
-                        transformations.quaternion_from_euler(np.pi, 0, 0))))
+                    zip(
+                        ["x", "y", "z", "w"],
+                        transformations.quaternion_from_euler(np.pi, 0, 0),
+                    )
+                )
+            ),
         )
 
         t_mat = rnp.numpify(t)
 
-        np.testing.assert_allclose(
-            t_mat.dot([0, 0, 1, 1]), [1.0, 2.0, 2.0, 1.0])
+        np.testing.assert_allclose(t_mat.dot([0, 0, 1, 1]), [1.0, 2.0, 2.0, 1.0])
 
         msg = rnp.msgify(Transform, t_mat)
 
@@ -64,14 +67,17 @@ class TestGeometry(unittest.TestCase):
             position=Point(x=1.0, y=2.0, z=3.0),
             orientation=Quaternion(
                 **dict(
-                    zip(['x', 'y', 'z', 'w'],
-                        transformations.quaternion_from_euler(np.pi, 0, 0))))
+                    zip(
+                        ["x", "y", "z", "w"],
+                        transformations.quaternion_from_euler(np.pi, 0, 0),
+                    )
+                )
+            ),
         )
 
         t_mat = rnp.numpify(t)
 
-        np.testing.assert_allclose(
-            t_mat.dot([0, 0, 1, 1]), [1.0, 2.0, 2.0, 1.0])
+        np.testing.assert_allclose(t_mat.dot([0, 0, 1, 1]), [1.0, 2.0, 2.0, 1.0])
 
         msg = rnp.msgify(Pose, t_mat)
 
@@ -84,5 +90,5 @@ class TestGeometry(unittest.TestCase):
         np.testing.assert_allclose(msg.orientation.w, t.orientation.w)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

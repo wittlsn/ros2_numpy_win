@@ -5,6 +5,7 @@ import sys
 import time
 from .registry import converts_from_numpy, converts_to_numpy
 
+
 @converts_to_numpy(PointCloud2)
 def point_cloud2_to_array(msg):
     """
@@ -32,14 +33,12 @@ def point_cloud2_to_array(msg):
         intensity_flag = False
 
     # Convert the PointCloud2 message to a NumPy array
-    pc_data = np.frombuffer(
-        msg.data, dtype=np.uint8).reshape(-1, msg.point_step)
+    pc_data = np.frombuffer(msg.data, dtype=np.uint8).reshape(-1, msg.point_step)
     xyz = pc_data[:, 0:12].view(dtype=np.float32).reshape(-1, 3)
     if rgb_flag:
-        rgb = pc_data[:, rgb_idx:rgb_idx+3][:, ::-1]
+        rgb = pc_data[:, rgb_idx : rgb_idx + 3][:, ::-1]
     if intensity_flag:
-        intensity = pc_data[:, intensity_idx:intensity_idx +
-                            2].view(dtype=np.uint16)
+        intensity = pc_data[:, intensity_idx : intensity_idx + 2].view(dtype=np.uint16)
 
     # return the arrays in a dictionary
     if rgb_flag and intensity_flag:
@@ -56,7 +55,7 @@ def point_cloud2_to_array(msg):
 
 
 @converts_from_numpy(PointCloud2)
-def array_to_point_cloud2(np_array, frame_id='base_link'):
+def array_to_point_cloud2(np_array, frame_id="base_link"):
     """
     Convert a numpy array to a PointCloud2 message. The numpy array must have a "xyz" field
     and can optionally have a "rgb" field and a "intensity" field.
@@ -74,17 +73,20 @@ def array_to_point_cloud2(np_array, frame_id='base_link'):
     msg.height = 1
     msg.width = np_array["xyz"].shape[0]
     msg.fields = [
-        PointField(name='x', offset=0, datatype=PointField.FLOAT32, count=1),
-        PointField(name='y', offset=4, datatype=PointField.FLOAT32, count=1),
-        PointField(name='z', offset=8, datatype=PointField.FLOAT32, count=1)]
+        PointField(name="x", offset=0, datatype=PointField.FLOAT32, count=1),
+        PointField(name="y", offset=4, datatype=PointField.FLOAT32, count=1),
+        PointField(name="z", offset=8, datatype=PointField.FLOAT32, count=1),
+    ]
 
     if rgb_flag:
-        msg.fields.append(PointField(name='rgb', offset=12,
-                          datatype=PointField.UINT32, count=1))
+        msg.fields.append(
+            PointField(name="rgb", offset=12, datatype=PointField.UINT32, count=1)
+        )
     if intensity_flag:
-        msg.fields.append(PointField(name='intensity', offset=16,
-                          datatype=PointField.UINT16, count=1))
-    msg.is_bigendian = sys.byteorder != 'little'
+        msg.fields.append(
+            PointField(name="intensity", offset=16, datatype=PointField.UINT16, count=1)
+        )
+    msg.is_bigendian = sys.byteorder != "little"
     # Check if message is dense
     msg.is_dense = not np.isnan(np_array["xyz"]).any()
 
@@ -104,17 +106,32 @@ def array_to_point_cloud2(np_array, frame_id='base_link'):
     # Here we create an array.array object using a memoryview, limiting copying and
     # increasing performance.
     if rgb_flag and intensity_flag:
-        memory_view = memoryview(np.hstack(np_array["xyz"].astype(np.float32).tobytes(
-        ), np_array["rgb"].astype(np.uint32).tobytes(), np_array["intensity"].astype(np.uint16).tobytes()))
+        memory_view = memoryview(
+            np.hstack(
+                np_array["xyz"].astype(np.float32).tobytes(),
+                np_array["rgb"].astype(np.uint32).tobytes(),
+                np_array["intensity"].astype(np.uint16).tobytes(),
+            )
+        )
 
     if rgb_flag and not intensity_flag:
-        memory_view = memoryview(np.hstack((np_array["xyz"].astype(np.float32).tobytes(
-        ), np_array["rgb"].astype(np.uint32).tobytes())))
+        memory_view = memoryview(
+            np.hstack(
+                (
+                    np_array["xyz"].astype(np.float32).tobytes(),
+                    np_array["rgb"].astype(np.uint32).tobytes(),
+                )
+            )
+        )
 
     if not rgb_flag and intensity_flag:
-        memory_view = memoryview(np.hstack(np_array["xyz"].astype(np.float32).tobytes(
-        ), np_array["intensity"].astype(np.uint16).tobytes()))
-    
+        memory_view = memoryview(
+            np.hstack(
+                np_array["xyz"].astype(np.float32).tobytes(),
+                np_array["intensity"].astype(np.uint16).tobytes(),
+            )
+        )
+
     if not rgb_flag and not intensity_flag:
         memory_view = memoryview(np_array["xyz"].astype(np.float32).tobytes())
 
